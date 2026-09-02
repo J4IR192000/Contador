@@ -8,6 +8,8 @@ import {
   ScrollView,
   SafeAreaView,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 
 export default function RechargeCounter() {
   // Estados para Recargas Individuales
@@ -15,7 +17,7 @@ export default function RechargeCounter() {
   const [tarjetasInd, setTarjetasInd] = useState('');
 
   // Estados para Recarga Auxiliar
-  const [showAuxiliar, setShowAuxiliar] = useState(true);
+  const [showAuxiliar, setShowAuxiliar] = useState(false);
   const [recargaAux, setRecargaAux] = useState('');
   const [tarjetasAux, setTarjetasAux] = useState('');
 
@@ -49,7 +51,12 @@ export default function RechargeCounter() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.scrollContent}
+        enableOnAndroid={true}
+        extraScrollHeight={20}
+        keyboardShouldPersistTaps="handled"
+      >
         
         {/* SECCIÓN 1: RECARGAS INDIVIDUALES */}
         <View style={styles.section}>
@@ -79,13 +86,16 @@ export default function RechargeCounter() {
                 value={tarjetasInd}
                 onChangeText={(val) => setTarjetasInd(cleanInput(val, false))}
               />
-              <Text style={styles.multiplyLabel}>x 15</Text>
+              <Text style={styles.multiplyLabel}>x 15 =</Text>
+            </View>
+            <View style={styles.labelGroup}>
+              <Text style={[styles.label,{textAlign: 'right',}]}>{totalTarjetasInd}</Text>
             </View>
           </View>
 
           {/* Subtotal Individuales */}
           <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>TOTAL</Text>
+            <Text style={styles.totalLabel}>TOTAL INDIVIDUAL</Text>
             <View style={styles.lineResultContainer}>
               <Text style={styles.lineResultText}>
                 {totalIndividuales > 0 ? `$${totalIndividuales.toLocaleString()}` : ''}
@@ -134,13 +144,16 @@ export default function RechargeCounter() {
                     value={tarjetasAux}
                     onChangeText={(val) => setTarjetasAux(cleanInput(val, false))}
                   />
-                  <Text style={styles.multiplyLabel}>x 15</Text>
+                  <Text style={styles.multiplyLabel}>x 15 =</Text>
+                </View>
+                <View style={styles.labelGroup}>
+                  <Text style={[styles.label,{textAlign: 'right',}]}>{totalTarjetasAux}</Text>
                 </View>
               </View>
 
               {/* Subtotal Auxiliar */}
               <View style={styles.totalRow}>
-                <Text style={styles.totalLabel}>TOTAL</Text>
+                <Text style={styles.totalLabel}>TOTAL DE AUXILIAR</Text>
                 <View style={styles.lineResultContainer}>
                   <Text style={styles.lineResultText}>
                     {totalAuxiliar > 0 ? `$${totalAuxiliar.toLocaleString()}` : ''}
@@ -170,7 +183,7 @@ export default function RechargeCounter() {
           <Text style={styles.cleanButtonText}>LIMPIAR</Text>
         </TouchableOpacity>
 
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -182,7 +195,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
-    paddingBottom: 40,
+    paddingBottom: 20,
   },
 
   // Cada sección ahora es una tarjeta independiente

@@ -37,14 +37,14 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    paddingVertical: 20,
+    paddingTop: 35,
   },
   menu: {
     flexDirection: 'row',
     justifyContent: 'center',
     paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
+    paddingTop: 5,
+    paddingBottom: 50,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',

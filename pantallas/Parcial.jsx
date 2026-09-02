@@ -8,18 +8,26 @@ import {
   ScrollView,
   SafeAreaView,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-const DENOMINATIONS = [500, 200, 100, 50, 20, 10];
+
+const DENOMINATIONS = [1000, 500, 200, 100, 50, 20, 10, 5, 2, 1, 0.5];
 
 export default function CashCounter() {
   // Estado para la cantidad de billetes/monedas
   const [quantities, setQuantities] = useState({
+    1000: '',
     500: '',
     200: '',
     100: '',
     50: '',
     20: '',
+    
     10: '',
+    5: '',
+    2: '',
+    1: '',
+    0.5: '',
   });
 
   // Estado para la lista dinámica de parciales adicionales
@@ -61,12 +69,18 @@ export default function CashCounter() {
   // Limpiar todo el formulario
   const handleClean = () => {
     setQuantities({
+      1000: '',
       500: '',
       200: '',
       100: '',
       50: '',
       20: '',
+      
       10: '',
+      5: '',
+      2: '',
+      1: '',
+      0.5: '',
     });
     setParciales([{ id: 1, value: '' }]);
   };
@@ -94,7 +108,12 @@ export default function CashCounter() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.scrollContent}
+        enableOnAndroid={true}
+        extraScrollHeight={20}
+        keyboardShouldPersistTaps="handled"
+      >
         <Text style={styles.headerTitle}>PARCIAL</Text>
         <View style={styles.card}>
         {/* Filas de Denominaciones */}
@@ -108,7 +127,7 @@ export default function CashCounter() {
                     value={quantities[denom]}
                     onChangeText={(val) => handleQuantityChange(denom, val)}
                 />
-                <Text style={styles.denomLabel}>${denom}</Text>
+                <Text style={styles.denomLabel}>x ${denom} =</Text>
                 <View style={styles.lineResultContainer}>
                     <Text style={styles.lineResultText}>
                     {subtotal > 0 ? `$${subtotal.toLocaleString()}` : ''}
@@ -168,7 +187,7 @@ export default function CashCounter() {
         <TouchableOpacity style={styles.cleanButton} onPress={handleClean}>
           <Text style={styles.cleanButtonText}>LIMPIAR</Text>
         </TouchableOpacity>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -180,7 +199,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
-    paddingBottom: 40,
+    paddingBottom: 20,
   },
   headerTitle: {
     fontSize: 20,
@@ -224,7 +243,7 @@ const styles = StyleSheet.create({
   denomLabel: {
     fontSize: 20,
     fontWeight: '500',
-    width: 80,
+    width: 100,
     marginLeft: 12,
     color: '#1C1C1E',
   },
