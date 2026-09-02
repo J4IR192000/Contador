@@ -23,6 +23,7 @@ export default function CashCounter() {
     50: '',
     20: '',
     
+    //MONEDAS
     10: '',
     5: '',
     2: '',
@@ -76,6 +77,7 @@ export default function CashCounter() {
       50: '',
       20: '',
       
+      //MONEDAS
       10: '',
       5: '',
       2: '',
