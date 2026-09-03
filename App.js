@@ -8,7 +8,16 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-        <View style={styles.content}>{screen === 'Parcial' ? <Parcial /> : <Recargas />}</View>
+      
+      <View style={styles.content}>
+        <View style={{ flex: 1, display: screen === 'Parcial' ? 'flex' : 'none' }}>
+          <Parcial />
+        </View>
+        <View style={{ flex: 1, display: screen === 'Recargas' ? 'flex' : 'none' }}>
+          <Recargas />
+        </View>
+      </View>
+
       <View style={styles.menu}>
         <TouchableOpacity
           style={[styles.menuButton, screen === 'Parcial' && styles.menuButtonActive]}
