@@ -11,37 +11,33 @@ import {
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 
-const DENOMINATIONS = [1000, 500, 200, 100, 50, 20, 10, 5, 2, 1, 0.5];
+const BILLETES = [1000, 500, 200, 100, 50, 20];
+const MONEDAS = [50, 20, 10, 5, 2, 1, 0.5];
 
 export default function CashCounter() {
-  // Estado para la cantidad de billetes/monedas
-  const [quantities, setQuantities] = useState({
-    1000: '',
-    500: '',
-    200: '',
-    100: '',
-    50: '',
-    20: '',
-    
-    //MONEDAS
-    10: '',
-    5: '',
-    2: '',
-    1: '',
-    0.5: '',
+  // Estado para la cantidad de billetes/monedas--------------------------------------------------------
+  const [billetes, setBilletes] = useState({
+    1000: '', 500: '', 200: '', 100: '', 50: '', 20: '',
   });
-
-  // Estado para la lista dinámica de parciales adicionales
+  const [monedas, setMonedas] = useState({
+    50: '', 20: '', 10: '', 5: '', 2: '', 1: '', 0.5: '',
+  });
   const [parciales, setParciales] = useState([{ id: 1, value: '' }]);
 
-  // Manejar el cambio de cantidad de billetes
-  const handleQuantityChange = (denom, value) => {
+
+  // Manejar el cambio de cantidad de billetes--------------------------------------------------------
+  const handleBilletesChange = (denom, value) => {
     // Acepta solo números
     const cleanValue = value.replace(/[^0-9]/g, '');
-    setQuantities((prev) => ({ ...prev, [denom]: cleanValue }));
+    setBilletes((prev) => ({ ...prev, [denom]: cleanValue }));
+  };
+  const handleMonedasChange = (denom, value) => {
+    // Acepta solo números
+    const cleanValue = value.replace(/[^0-9]/g, '');
+    setMonedas((prev) => ({ ...prev, [denom]: cleanValue }));
   };
 
-  // Agregar un nuevo parcial
+  // Agregar un nuevo parcial--------------------------------------------------------
   const addParcial = () => {
     setParciales((prev) => [
       ...prev,
@@ -67,46 +63,46 @@ export default function CashCounter() {
     );
   };
 
-  // Limpiar todo el formulario
+  // Limpiar todo el formulario-----------------------------------------------------------------
   const handleClean = () => {
-    setQuantities({
-      1000: '',
-      500: '',
-      200: '',
-      100: '',
-      50: '',
-      20: '',
-      
-      //MONEDAS
-      10: '',
-      5: '',
-      2: '',
-      1: '',
-      0.5: '',
-    });
+    setBilletes({ 1000: '', 500: '', 200: '', 100: '', 50: '', 20: '' });
+    setMonedas({ 50: '', 20: '', 10: '', 5: '', 2: '', 1: '', 0.5: '' });
     setParciales([{ id: 1, value: '' }]);
   };
 
-  // Cálculo del subtotal por denominación
-  const getSubtotal = (denom) => {
-    const qty = parseInt(quantities[denom], 10) || 0;
+  // Cálculo del subtotal por denominación--------------------------------------------------------
+  // Subtotal específico para billetes
+  const getSubtotalBilletes = (denom) => {
+    const qty = parseInt(billetes[denom], 10) || 0;
     return qty * denom;
   };
 
-  // Cálculo del total de los billetes
-  const totalBilletes = DENOMINATIONS.reduce(
-    (acc, denom) => acc + getSubtotal(denom),
+  // Subtotal específico para monedas
+  const getSubtotalMonedas = (denom) => {
+    const qty = parseInt(monedas[denom], 10) || 0;
+    return qty * denom;
+  };
+
+  // Cálculo del total--------------------------------------------------------------------------
+  // Total de billetes
+  const totalBilletes = BILLETES.reduce(
+    (acc, denom) => acc + getSubtotalBilletes(denom),
+    0
+  );
+  // Total de monedas
+  const totalMonedas = MONEDAS.reduce(
+    (acc, denom) => acc + getSubtotalMonedas(denom),
     0
   );
 
-  // Cálculo del total de los parciales adicionales
+  // Cálculo del total de los parciales adicionales--------------------------------------------------------
   const totalParciales = parciales.reduce(
     (acc, item) => acc + (parseFloat(item.value) || 0),
     0
   );
 
   // Gran Total
-  const granTotal = totalBilletes + totalParciales;
+  const granTotal = totalBilletes + totalMonedas + totalParciales;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -117,28 +113,53 @@ export default function CashCounter() {
         keyboardShouldPersistTaps="handled"
       >
         <Text style={styles.headerTitle}>PARCIAL</Text>
+        {/* Sección de Billetes */}
+        <Text style={styles.sectionTitle}>Billetes</Text>
         <View style={styles.card}>
-        {/* Filas de Denominaciones */}
-            {DENOMINATIONS.map((denom) => {
-            const subtotal = getSubtotal(denom);
+          {BILLETES.map((denom) => {
+            const subtotal = getSubtotalBilletes(denom);
             return (
-                <View key={denom} style={styles.denomRow}>
+              <View key={denom} style={styles.denomRow}>
+                <Text style={styles.iconLabel}>💵</Text>
                 <TextInput
-                    style={styles.inputSquare}
-                    keyboardType="numeric"
-                    value={quantities[denom]}
-                    onChangeText={(val) => handleQuantityChange(denom, val)}
+                  style={styles.inputSquare}
+                  keyboardType="numeric"
+                  value={billetes[denom]}
+                  onChangeText={(val) => handleBilletesChange(denom, val)}
                 />
                 <Text style={styles.denomLabel}>x ${denom} =</Text>
                 <View style={styles.lineResultContainer}>
-                    <Text style={styles.lineResultText}>
+                  <Text style={styles.lineResultText}>
                     {subtotal > 0 ? `$${subtotal.toLocaleString()}` : ''}
-                    </Text>
-                    <View style={styles.underline} />
+                  </Text>
                 </View>
-                </View>
+              </View>
             );
-            })}
+          })}
+        </View>
+        {/* Sección de Monedas */}
+        <Text style={styles.sectionTitle}>Monedas</Text>
+        <View style={styles.card}>
+          {MONEDAS.map((denom) => {
+            const subtotal = getSubtotalMonedas(denom);
+            return (
+              <View key={denom} style={styles.denomRow}>
+                <Text style={styles.iconLabel}>🪙</Text>
+                <TextInput
+                  style={styles.inputSquare}
+                  keyboardType="numeric"
+                  value={monedas[denom]}
+                  onChangeText={(val) => handleMonedasChange(denom, val)}
+                />
+                <Text style={styles.denomLabel}>x ${denom} =</Text>
+                <View style={styles.lineResultContainer}>
+                  <Text style={styles.lineResultText}>
+                    {subtotal > 0 ? `$${subtotal.toLocaleString()}` : ''}
+                  </Text>
+                </View>
+              </View>
+            );
+          })}
         </View>
 
         {/* Sección de Parciales Dinámicos */}
@@ -210,6 +231,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     letterSpacing: 0.3,
   },
+  sectionTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#8E8E93',
+    marginBottom: 8,
+    marginLeft: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.3,
+  },
 
   // Tarjeta contenedora para las denominaciones
   card: {
@@ -248,6 +278,10 @@ const styles = StyleSheet.create({
     width: 100,
     marginLeft: 12,
     color: '#1C1C1E',
+  },
+  iconLabel: {
+    fontSize: 20,
+    marginRight: 10,
   },
   lineResultContainer: {
     flex: 1,
